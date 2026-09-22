@@ -45,7 +45,7 @@ pipeline {
             steps {
                 echo '🐳 构建 Docker 镜像...'
                 dir('demo') {
-                    sh 'docker build -t crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com/etlbat/demo:latest .'
+                    sh 'DOCKER_BUILDKIT=0 docker build -t crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com/etlbat/demo:latest .'
                 }
             }
         }
