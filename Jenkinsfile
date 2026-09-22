@@ -21,18 +21,18 @@ pipeline {
         stage('Build') {
             steps {
                 echo '🔨 Maven 编译打包...'
-                sh '''
-                    cd demo
-                    chmod +x mvnw
-                    ./mvnw -B clean package -DskipTests
-                '''
+                dir('demo') {
+                    sh 'chmod +x mvnw && ./mvnw -B clean package -DskipTests'
+                }
             }
         }
 
         stage('Test') {
             steps {
                 echo '🧪 运行单元测试...'
-                sh 'cd demo && ./mvnw -B test'
+                dir('demo') {
+                    sh './mvnw -B test'
+                }
             }
             post {
                 always {
@@ -44,10 +44,9 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo '🐳 构建 Docker 镜像...'
-                sh '''
-                    cd demo
-                    docker build -t registry.cn-guangzhou.aliyuncs.com/etlbat/demo:latest .
-                '''
+                dir('demo') {
+                    sh 'docker build -t registry.cn-guangzhou.aliyuncs.com/etlbat/demo:latest .'
+                }
             }
         }
 
@@ -72,29 +71,23 @@ pipeline {
         stage('Commit Build Info') {
             steps {
                 echo '📝 提交构建信息...'
-                sh '''
-                    cd demo
-                    git config user.name "jenkins"
-                    git config user.email "jenkins@ci.local"
-                    echo "Last build: ${BUILD_NUMBER} - $(date '+%Y-%m-%d %H:%M:%S')" > build-info.txt
-                    git add build-info.txt
-                    git diff --cached --quiet || git commit -m "ci: update build info #${BUILD_NUMBER}"
-                    git push origin HEAD:${BRANCH}
-                '''
+                dir('demo') {
+                    sh '''
+                        git config user.name "jenkins"
+                        git config user.email "jenkins@ci.local"
+                        echo "Last build: ${BUILD_NUMBER} - $(date '+%Y-%m-%d %H:%M:%S')" > build-info.txt
+                        git add build-info.txt
+                        git diff --cached --quiet || git commit -m "ci: update build info #${BUILD_NUMBER}"
+                        git push origin HEAD:main
+                    '''
+                }
             }
         }
     }
 
     post {
-        success {
-            echo '✅ 构建成功！'
-        }
-        failure {
-            echo '❌ 构建失败！'
-        }
-        always {
-            echo '🧹 清理工作空间...'
-            cleanWs()
-        }
+        success { echo '✅ 构建成功！' }
+        failure { echo '❌ 构建失败！' }
+        always  { cleanWs() }
     }
 }
