@@ -54,7 +54,8 @@ pipeline {
             steps {
                 echo '🔑 登录阿里云镜像仓库...'
                 withCredentials([usernamePassword(credentialsId: 'aliyun-acr', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
-                    sh 'echo $ACR_PASS | docker login --username=$ACR_USER --password-stdin crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com'
+                    sh 'echo "USER: $ACR_USER"'
+                    sh "echo \$ACR_PASS | docker login --username=\$ACR_USER --password-stdin crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com"
                 }
             }
         }
