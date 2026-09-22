@@ -50,6 +50,15 @@ pipeline {
             }
         }
 
+        stage('Docker Login') {
+            steps {
+                echo '🔑 登录阿里云镜像仓库...'
+                withCredentials([usernamePassword(credentialsId: 'aliyun-acr', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
+                    sh 'echo $ACR_PASS | docker login --username=$ACR_USER --password-stdin registry.cn-guangzhou.aliyuncs.com'
+                }
+            }
+        }
+
         stage('Docker Push') {
             steps {
                 echo '🚀 推送镜像到仓库...'
