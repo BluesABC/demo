@@ -45,7 +45,7 @@ pipeline {
             steps {
                 echo '🐳 构建 Docker 镜像...'
                 dir('demo') {
-                    sh 'docker build -t registry.cn-guangzhou.aliyuncs.com/etlbat/demo:latest .'
+                    sh 'docker build -t crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com/etlbat/demo:latest .'
                 }
             }
         }
@@ -54,7 +54,7 @@ pipeline {
             steps {
                 echo '🔑 登录阿里云镜像仓库...'
                 withCredentials([usernamePassword(credentialsId: 'aliyun-acr', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
-                    sh 'echo $ACR_PASS | docker login --username=$ACR_USER --password-stdin registry.cn-guangzhou.aliyuncs.com'
+                    sh 'echo $ACR_PASS | docker login --username=$ACR_USER --password-stdin crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com'
                 }
             }
         }
@@ -62,7 +62,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 echo '🚀 推送镜像到仓库...'
-                sh 'docker push registry.cn-guangzhou.aliyuncs.com/etlbat/demo:latest'
+                sh 'docker push crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com/etlbat/demo:latest'
             }
         }
 
@@ -72,7 +72,7 @@ pipeline {
                 sh '''
                     docker stop demo-app 2>/dev/null || true
                     docker rm demo-app 2>/dev/null || true
-                    docker run -d --name demo-app -p 8082:8080 registry.cn-guangzhou.aliyuncs.com/etlbat/demo:latest
+                    docker run -d --name demo-app -p 8082:8080 crpi-n4a8umbyx0cmpkk6.cn-guangzhou.personal.cr.aliyuncs.com/etlbat/demo:latest
                 '''
             }
         }
