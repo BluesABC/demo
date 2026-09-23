@@ -78,21 +78,6 @@ pipeline {
             }
         }
 
-        stage('Commit Build Info') {
-            steps {
-                echo '📝 提交构建信息...'
-                dir('demo') {
-                    sh '''
-                        git config user.name "jenkins"
-                        git config user.email "jenkins@ci.local"
-                        echo "Last build: ${BUILD_NUMBER} - $(date '+%Y-%m-%d %H:%M:%S')" > build-info.txt
-                        git add build-info.txt
-                        git diff --cached --quiet || git commit -m "ci: update build info #${BUILD_NUMBER}"
-                        git push origin HEAD:main
-                    '''
-                }
-            }
-        }
     }
 
     post {
